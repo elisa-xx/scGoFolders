@@ -1,78 +1,8 @@
-# sc-interns-2023
-
-The technical take home for SC interns of 2023.
-
-## Compile instruction
-
-Requires `Go` >= `1.20`
-
-follow the official install instruction: [Golang Installation](https://go.dev/doc/install)
-
-To run the code on your local machine
-```
-  go run main.go
-```
-
-## Folder structure
-
-```
-| go.mod
-| README.md
-| sample.json
-| main.go
-| folders
-    | folders.go
-    | folders_test.go
-    | static.go
-```
-
-## Instructions
-
-- This technical assessment consist of 2 components.
-- Component 1:
-  - within `folders.go`. 
-    - We would like you to read through the code and run the code.
-    - Write some comments on what you think the code does.
-    - suggest some improvement that can be made to the code.
-    - Implement the suggested improvement.
-    - Write up some unit tests in `folders_test.go` for your new `GetAllFolders` method
-
-- Component 2:
-  - Extend your improved code to now facilitate pagination. 
-  - You can copy over the existing methods into `folders_pagination.go` to get started.
-  - Write a short explanation on why you choosen the solution you implemented.
-
-## What is pagination?
-  - Pagination helps break down a large dataset into smaller chunks.
-  - The small data chunk will then be served to the client side usually accompanied a token that points to the next chunk.
-  - The end result could potentially look like this:
-```
-  original data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-  
-  The current result will look like this:
-  { data: [1, 2, 3, ..., 10] }
-  
-  With pagination implementation, the result may look like this:
-  request() -> { data: [1, 2], token: "nQsjz" }
-
-  The token can then be used to fetch more result:
-  
-  request("nQsjz") -> { data : [3, 4], token: "uJsnQ" }
-
-  .
-  .
-  .
-
-  And more results until there's no data left:
-  
-  { data: [9, 10], token: "" }
-```
-
-## Submission
-
-Create a repo in your chosen git repository (make sure it is public so we can access it) and reply with the link to your code. We recommend using Github. 
-
-
-## Contact
-
-If you have any questions feel free to contact us at: interns@safetyculture.io
+Pagination Choice
+There were a lot of resources on implementing pagination with a database, and using other 3rd party packages
+However, I boiled it down to the simplest level for the purposes of getting an MVP that embodied the concept and functionality of pagination
+Instead of using a pre-built package, I wrote a function that would use the token as an indicator of which index position to use as a starting point when populating the slice.
+GetSomeFolders would still take in a single request struct and return a response struct (and error if any). 
+Instead of taking in a struct AND a token, and returning a struct AND a token (and error if any), I added a modified FetchFolderRequest struct and a modified FetchFolderResponse struct, both of which have additional fields for Token.
+That way, if in future, you needed to add anymore inputs to the "GetFolders" function, you would be able to simply add a new field in the FetchFolderRequest/ FetchFolderResponse structs, and keep the actual function looking cleaner.
+There are more sophisticated ways of implementing pagination, and I didn't choose them because we aren't dealing with a database in this instance, I wanted to keep things simple, and I was working with a pretty tight time constraint personally.
